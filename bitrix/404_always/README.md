@@ -6,3 +6,5 @@
 NEED:
 1. Установить константу в dbconn.php или init.php
 2. Добавить в init.php или подключаемые файлы обработку события
+
+TESTED ON: Bitrix 14
