@@ -23,12 +23,12 @@ function getSubsectionRecursive($iblock_id, $section_id)
     if(!$cs->AffectedRowsCount())
     {
         return $section_id;
-    } else {
-        $ret = array();
-        while($sec = $cs->Fetch())
-        {
-            $ret[] = $sec['ID'];
-        }
-        return getSubsectionRecursive($iblock_id, $ret);
     }
+
+    $ret = array();
+    while($sec = $cs->Fetch())
+    {
+        $ret[] = $sec['ID'];
+    }
+    return getSubsectionRecursive($iblock_id, $ret);
 }
