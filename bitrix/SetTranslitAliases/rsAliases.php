@@ -1,18 +1,30 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: mitrich
- * Date: 19.07.14
- * Time: 14:38
+ * Created in RedSoft.
+ * ===================
+ *
+ * Класс для простановки/удаления алиасов
+ *
+ * @authors - Mitrich, Skvor
+ *
  */
 
 class rsAliases {
-    public static function makeAlias($iblock_id,$append_suffix = '-1')
+
+    /**
+     * Установить алиасы для элементов
+     *
+     * @param int $iblock_id - id инфоблока
+     * @param string $append_suffix - "добавка" если найден повтор
+     *
+     * @return null
+     */
+    public static function makeAlias($iblock_id, $append_suffix = '-1')
     {
-        if(!intval($iblock_id))
-        {
+        if(!intval($iblock_id)) {
             die('Не гони, ID инфоблока надо передать');
         }
+
         //Добудем все без альясов
         $cib = CIBlockElement::GetList(
             array(),
@@ -28,10 +40,9 @@ class rsAliases {
             )
         );
 
-        while($ob = $cib->Fetch())
-        {
+        while ($ob = $cib->Fetch()) {
             //добываем альяс
-            $alias = rsFixer::transliterate($iblock_id, $append_suffix,$ob['NAME']);
+            $alias = rsFixer::transliterate($iblock_id, $append_suffix, $ob['NAME']);
 
             //обновимся
             $el = new CIBlockElement();
@@ -40,18 +51,23 @@ class rsAliases {
             );
 
             $res = $el->Update($ob['ID'],$ar);
-            if(!$res)
-            {
+            if (!$res) {
                 echo('ELEMENT - ' . $ob['NAME'] . '<br />');
             }
-
         }
     }
 
+    /**
+     * Установить алиасы для разделов
+     *
+     * @param int $iblock_id - id инфоблока
+     * @param string $append_suffix - "добавка" если найден повтор
+     *
+     * @return null
+     */
     public static function makeSectionAlias($iblock_id,$append_suffix = '-1')
     {
-        if(!intval($iblock_id))
-        {
+        if (!intval($iblock_id)) {
             die('Не гони, ID инфоблока надо передать');
         }
 
@@ -69,10 +85,9 @@ class rsAliases {
             )
         );
 
-        while($ob = $cib->Fetch())
-        {
+        while ($ob = $cib->Fetch()) {
             //добываем альяс
-            $alias = rsFixer::transliterate($iblock_id, $append_suffix,$ob['NAME'], true);
+            $alias = rsFixer::transliterate($iblock_id, $append_suffix, $ob['NAME'], true);
 
             //обновимся
             $el = new CIBlockSection();
@@ -81,14 +96,22 @@ class rsAliases {
             );
 
             $res = $el->Update($ob['ID'],$ar);
-            if(!$res)
-            {
+
+            if (!$res) {
                 echo('ELEMENT - ' . $ob['NAME'] . '<br />');
             }
-
         }
     }
 
+    /**
+     * Проверка алиасов для елементов
+     *
+     * @param int $iblock_id - id инфоблока
+     * @param string $alias - алиас для проверки
+     * @param string $append_suffix - "добавка" если найден повтор
+     *
+     * @return string
+     */
     public static function checkAlias($iblock_id, $alias, $append_suffix = '-1')
     {
         $cib = CIBlockElement::GetList(
@@ -102,18 +125,27 @@ class rsAliases {
             array()
         );
 
-        if($cib->AffectedRowsCount())
-        {
+        if ($cib->AffectedRowsCount()) {
 
             echo 'duplication find - ' . $alias . "<br />";
 
             $new_alias = $alias.$append_suffix;
-            return rsFixer::checkAlias($iblock_id, $new_alias,$append_suffix);
-        } else {
+            return rsFixer::checkAlias($iblock_id, $new_alias, $append_suffix);
+        }
+        else {
             return $alias;
         }
     }
 
+    /**
+     * Проверка алиасов для разделов
+     *
+     * @param int $iblock_id - id инфоблока
+     * @param string $alias - алиас для проверки
+     * @param string $append_suffix - "добавка" если найден повтор
+     *
+     * @return string
+     */
     public static function checkSectionAlias($iblock_id, $alias, $append_suffix = '-1')
     {
         $cib = CIBlockSection::GetList(
@@ -124,24 +156,34 @@ class rsAliases {
             )
         );
 
-        if($cib->AffectedRowsCount())
-        {
+        if ($cib->AffectedRowsCount()) {
 
             echo 'duplication find - ' . $alias . "<br />";
 
-            $new_alias = $alias.$append_suffix;
-            return rsFixer::checkSectionAlias($iblock_id, $new_alias,$append_suffix);
-        } else {
+            $new_alias = $alias . $append_suffix;
+
+            return rsFixer::checkSectionAlias($iblock_id, $new_alias, $append_suffix);
+        }
+        else {
             return $alias;
         }
     }
 
-
-    public static function transliterate($iblock_id,$append_suffix,$string, $isSection = false)
+    /**
+     * Транслитерация
+     *
+     * @param int $iblock_id - id инфоблока
+     * @param string $append_suffix - "добавка" если найден повтор
+     * @param string $string - строка для транслитерации
+     * @param bool $isSection - транслитерация для раздела
+     *
+     * @return string
+     */
+    public static function transliterate($iblock_id, $append_suffix, $string, $isSection = false)
     {
         $string = trim(mb_strtolower($string));
-        $converter = array(
 
+        $converter = array(
             'а' => 'a',   'б' => 'b',   'в' => 'v',
 
             'г' => 'g',   'д' => 'd',   'е' => 'e',
@@ -187,7 +229,6 @@ class rsAliases {
             'Ь' => '\'',  'Ы' => 'Y',   'Ъ' => '\'',
 
             'Э' => 'E',   'Ю' => 'Yu',  'Я' => 'Ya',
-
         );
 
         $pre_out = strtr($string, $converter);
@@ -208,9 +249,92 @@ class rsAliases {
 
         $pre_out = preg_replace('#^-#', '', $pre_out);
 
-        if ($isSection)
-            return rsFixer::checkSectionAlias($iblock_id,$pre_out,$append_suffix);
-        else
-            return rsFixer::checkAlias($iblock_id,$pre_out,$append_suffix);
+        if ($isSection) {
+            return rsFixer::checkSectionAlias($iblock_id, $pre_out, $append_suffix);
+        }
+        else {
+            return rsFixer::checkAlias($iblock_id, $pre_out, $append_suffix);
+        }
     }
+
+    /**
+     * Очистка алиасов для елементов
+     *
+     * @param int $iblock_id - id инфоблока
+     *
+     * @return null
+     */
+    public static function cleanAliases($iblock_id)
+    {
+        if (!intval($iblock_id)) {
+            die('Не гони, ID инфоблока надо передать');
+        }
+
+        $cib = CIBlockElement::GetList(
+            array(),
+            array(
+                "IBLOCK_ID" => intval($iblock_id)
+            ),
+            false,
+            false,
+            array(
+                "ID"
+            )
+        );
+
+        while ($ob = $cib->Fetch()) {
+            //обновимся
+            $el = new CIBlockElement();
+            $ar = array(
+                'CODE' => ''
+            );
+
+            $res = $el->Update($ob['ID'],$ar);
+
+            if (!$res) {
+                echo('ELEMENT - ' . $ob['NAME'] . '<br />');
+            }
+        }
+    }
+
+    /**
+     * Очистка алиасов для разделов
+     *
+     * @param int $iblock_id - id инфоблока
+     *
+     * @return null
+     */
+    public static function cleanSectionAliases($iblock_id)
+    {
+        if (!intval($iblock_id)) {
+            die('Не гони, ID инфоблока надо передать');
+        }
+
+        $cib = CIBlockSection::GetList(
+            array(),
+            array(
+                "IBLOCK_ID" => intval($iblock_id)
+            ),
+            false,
+            false,
+            array(
+                "ID"
+            )
+        );
+
+        while ($ob = $cib->Fetch()) {
+            //обновимся
+            $el = new CIBlockSection();
+            $ar = array(
+                'CODE' => ''
+            );
+
+            $res = $el->Update($ob['ID'],$ar);
+
+            if (!$res) {
+                echo('SECTION - ' . $ob['NAME'] . '<br />');
+            }
+        }
+    }
+
 }
