@@ -15,6 +15,8 @@ rsAliases::makeSectionAlias(IBLOCK_ID); // Ставим алиасы для ра
 rsAliases::cleanAliases(IBLOCK_ID); // Очистка алиасов элементов
 rsAliases::cleanSectionAliases(IBLOCK_ID); // Очистка алиасов раздела
 ```
+## Тестировалось
+Bitrix v10-14
 ## Авторы
 - Mitrich
 - Skvor
