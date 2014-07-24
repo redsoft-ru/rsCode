@@ -13,3 +13,6 @@ require_once( dirname(__FILE__) . '/rsAliases.php');
 rsAliases::makeAlias(IBLOCK_ID); // Ставим алиасы для элементов
 rsAliases::makeSectionAlias(IBLOCK_ID); // Ставим алиасы для разделов
 ```
+## Авторы
+- Mitrich
+- Skvor
