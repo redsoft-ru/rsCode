@@ -1,6 +1,6 @@
-## Класс для установки алиасов для элементов и разделов
+# Класс для установки алиасов для элементов и разделов
 
-# Установка
+## Установка
 
 - Копируем ```rsAliases.php``` в ```/bitrix/php_interface/```
 - Подключаем файл в init.php
@@ -8,7 +8,7 @@
 CModule::IncludeModule("iblock"); // Для подстраховки
 require_once( dirname(__FILE__) . '/rsAliases.php');
 ```
-- Использование
+## Использование
 ```php
 rsAliases::makeAlias(IBLOCK_ID); // Ставим алиасы для элементов
 rsAliases::makeSectionAlias(IBLOCK_ID); // Ставим алиасы для разделов
